@@ -96,3 +96,166 @@ GROUP BY C.CategoryID,
 HAVING SUM(P.UnitsInStock) < 200
 ORDER BY CategoryName, P.ProductName DESC;
 
+----JOINS------------------------------------------------------------------------
+--Estructura:
+--SELECT [TABLA]
+--FROM
+--Tablaizquierda
+--Joins
+--Tabla derecha
+--On=campo1=campo2;
+
+--El AS _ ES PARA crear un alias
+
+---Inner Join = Join: son todas las coincidencias en ambas tablas, con lo que esta en el ON
+--Left Join: son todos los datos de la tabla left y todos los que coinciden de la otra tabla, 
+   --aqui si importa el orden: los que no coinciden se ponen en NULL
+--Righ Join: son todos los datos de la tabla righ y todos los que coinciden de la otra tabla
+--Full Join: todos los valores de las dos tablas los que coinciden y los que no los pone en NULL
+
+/**
+
+
+
+**/
+
+--Seleccionar las categorias y sus productos
+SELECT 
+      categories.CategoryID, 
+      categories.CategoryName,
+      Products.ProductID,
+      products.ProductName,
+      products.UnitPrice,
+      products.UnitsInStock,
+      products.UnitsInStock,
+      (products.UnitPrice * Products.UnitsInStock)
+      AS [Precio Inventario]
+FROM Categories
+INNER JOIN Products
+on Categories.CategoryID =products.CategoryID
+WHERE categories.CategoryID = 9;
+
+-------------------------------------------------------------------------
+
+-- Crear una tabla a partir de una consuta 
+
+SELECT TOP 0
+	CategoryID,
+	CategoryName
+	INTO  categoria
+	FROM categories;
+
+ALTER TABLE categoria
+ADD CONSTRAINT pk_categoria
+PRIMARY KEY (CategoryID);
+
+INSERT INTO categoria
+VALUES ('C1'),('C2'),('C3'),('C4'),('C5');
+
+SELECT TOP 0
+	ProductID AS [numero producto],
+	ProductName AS [nombre_producto],
+	CategoryID AS [catego_id]
+FROM Products;
+
+SELECT TOP 0
+	ProductID AS [numero_producto],
+	ProductName AS [nombre_producto],
+	CategoryID AS [catego_id]
+INTO producto
+FROM Products;
+
+ALTER TABLE producto
+ADD CONSTRAINT pk_producto
+PRIMARY KEY (numero_producto);
+
+ALTER TABLE producto
+ADD CONSTRAINT fk_producto_categoria
+FOREIGN KEY (catego_id)
+REFERENCES categoria (CategoryID)
+ON DELETE CASCADE;
+
+INSERT INTO producto
+VALUES ('P1',1),
+		('P2',1),
+		('P3',2),
+		('P4',2),
+		('P5',3),
+		('P6',NULL);
+
+--INNER JOIN
+
+
+SELECT *
+FROM categoria AS c
+INNER JOIN 
+producto AS P
+ON c.CategoryID = p.catego_id;
+
+--LEFT JOIN
+SELECT *
+FROM categoria AS c
+LEFT JOIN 
+producto AS P
+ON c.CategoryID = p.catego_id;
+
+-- RIGHT JOIN
+SELECT *
+FROM categoria AS c
+RIGHT JOIN 
+producto AS P
+ON c.CategoryID = p.catego_id;
+
+-- FULL JOIN
+SELECT *
+FROM categoria AS c
+FULL JOIN 
+producto AS P
+ON c.CategoryID = p.catego_id;
+
+-- SIMULAR EL RIGHT JOIN DEL QUERY ANTERIOR 
+-- CON UN LEFT JOIN
+
+SELECT c.CategoryID, c.CategoryName,
+	p.numero_producto, p.nombre_producto,
+	p.catego_id
+FROM categoria AS c
+RIGHT JOIN 
+producto AS P
+ON c.CategoryID = p.catego_id;
+
+
+SELECT c.CategoryID, c.CategoryName,
+	p.numero_producto, p.nombre_producto,
+	p.catego_id
+FROM producto AS p
+LEFT JOIN  
+categoria AS c
+ON c.CategoryID = p.catego_id;
+
+-- VISUALIZAR TODAS LAS CATEGORIAS QUE NO TIENEN PRODUCTOS 
+
+SELECT *
+FROM categoria AS c
+LEFT JOIN
+producto AS p
+ON c.CategoryID = p.catego_id
+WHERE numero_producto is null;
+
+-- SELECCIONAR TODOS LOS PRODUCTOS QUE 
+-- NO TIENE CATEGORIA
+
+SELECT *
+FROM producto AS p
+LEFT JOIN
+categoria AS c
+ON c.CategoryID = p.catego_id
+WHERE catego_id is null;
+
+--GUARDADR EN UNA TABLA DE PRODUCTOS NUEVOS TODOS AQUELLOS PRODUCTOS QUE FUERON AGREGADOS 
+--RECIEMTEMENTE Y NO ESTAN EN ESTA TABLA DE APOYO
+SELECT *
+FROM producto;
+
+SELECT *
+FROM categoria;
