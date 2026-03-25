@@ -33,15 +33,15 @@ CREATE TABLE cliente (
 );
 
 ```
-int → números enteros.
+int= números enteros.
 
-nvarchar → texto.
+nvarchar= texto.
 
-not null → obligatorio.
+not null= obligatorio.
 
-null → opcional.
+null= opcional.
 
-money → valores monetarios.
+money= valores monetarios.
 
 default 500.0 → si no se inserta valor, asigna 500.
 
@@ -61,10 +61,11 @@ CREATE TABLE clientes(
 ```
 PRIMARY KEY → clave primaria (única y no repetida).
 
-DATE → tipo fecha.
+DATE= tipo fecha.
 
 INSERT (Insertar datos)
 --
+
 ```sql 
 INSERT INTO clientes
 VALUES (1, 'GOKU', 'LINTERNA', 'SUPERMAN', 450, '1578-01-17', 100);
@@ -74,6 +75,7 @@ Inserta un registro completo respetando el orden de columnas.
 
 Error ejemplo (clave duplicada)
 --
+
 ```sql 
 INSERT INTO clientes
 VALUES (2, 'PANCRACIO', 'RIVERO', 'PATROCLO', 20, '2005-01-17', 10000);
@@ -102,7 +104,7 @@ SELECT cliente_id, nombre, edad, limite_credito
 FROM clientes;
 
 ```
-Muestra solo columnas específicas.
+Muestra columnas específicas.
 
 ```sql 
 SELECT GETDATE();
@@ -113,6 +115,7 @@ Devuelve fecha y hora actual del sistema.
 
 Tabla con IDENTITY
 --
+
 ```sql 
 CREATE TABLE clientes_2(
   cliente_id int not null identity(1,1),
@@ -125,11 +128,11 @@ CREATE TABLE clientes_2(
 );
 
 ```
-IDENTITY(1,1) → autoincrementable.
+IDENTITY(1,1)= autoincrementable.
 
-default GETDATE() → asigna fecha automática.
+default GETDATE()= asigna fecha automática.
 
-CONSTRAINT → nombre personalizado de la restricción.
+CONSTRAINT= nombre personalizado de la restricción.
 
 Tabla suppliers (con restricciones avanzadas)
 --
@@ -148,13 +151,13 @@ CREATE TABLE suppliers (
 
 ```
 
-UNIQUE → no permite nombres repetidos.
+UNIQUE= no permite nombres repetidos.
 
-CHECK → valida condiciones.
+CHECK= valida condiciones.
 
-IN ('A','B','C') → solo acepta esos valores.
+IN ('A','B','C')= solo acepta esos valores.
 
-[name] → se usan corchetes porque es palabra reservada.
+[name]= se usan corchetes porque es palabra reservada.
 
 Crear Base de Datos dborders
 --
@@ -247,9 +250,9 @@ ON UPDATE SET NULL
 
 ¿Qué hace?
 
-Si se elimina el proveedor → el **supplier_id** del producto se vuelve NULL.
+Si se elimina el proveedor= el **supplier_id** del producto se vuelve NULL.
 
-Si se actualiza el ID del proveedor → también se vuelve NULL en productos.
+Si se actualiza el ID del proveedor= también se vuelve NULL en productos.
 
 # 02-consultassimples.sql
 
@@ -263,11 +266,11 @@ SELECT * FROM Products;
 SELECT * FROM Orders;
 SELECT * FROM [Order Details];
 ```
-SELECT → Sirve para consultar información.
+SELECT= Sirve para consultar información.
 
--*- → Significa “todas las columnas”.
+-*-= Significa “todas las columnas”.
 
-FROM → Indica la tabla de donde se obtienen los datos.
+FROM= Indica la tabla de donde se obtienen los datos.
 
 Muestra todos los registros y todas las columnas de la tabla.
 
@@ -289,9 +292,9 @@ SELECT
 	UnitsInStock AS STOCK
 FROM Products;
 ```
-AS → Cambia el nombre de la columna en el resultado.
+AS= Cambia el nombre de la columna en el resultado.
 
-[ ] → Permite usar espacios en el nombre del alias.
+[ ] = Permite usar espacios en el nombre del alias.
 
 Se usa para hacer los resultados más claros o personalizados.
 
@@ -364,11 +367,11 @@ ORDER BY
     ORDER BY UnitPrice DESC;
 
 ``` 
-ORDER BY → Ordena los resultados.
+ORDER BY= Ordena los resultados.
 
-DESC → Descendente.
+DESC=descendente.
 
-ASC → Ascendente (por defecto).
+ASC= Ascendente (por defecto).
 
 Funciones de Fecha
 --
@@ -491,12 +494,12 @@ Cambia el idioma del servidor para mostrar nombres de días y meses en español.
 
  ### Funciones principales:
 
-1. `SUM()` → Suma valores numéricos.
-2. `MAX()` → Devuelve el valor máximo.
-3. `MIN()` → Devuelve el valor mínimo.
-4. `AVG()` → Calcula el promedio.
-5. `COUNT(*)` → Cuenta todos los registros.
-6. `COUNT(campo)` → Cuenta los registros donde el campo NO es NULL.
+1. `SUM()` = Suma valores numéricos.
+2. `MAX()` = Devuelve el valor máximo.
+3. `MIN()` = Devuelve el valor mínimo.
+4. `AVG()` = Calcula el promedio.
+5. `COUNT(*)` = Cuenta todos los registros.
+6. `COUNT(campo)` = Cuenta los registros donde el campo NO es NULL.
 
 ###  Base de datos utilizada
 ```sql

@@ -254,8 +254,54 @@ WHERE catego_id is null;
 
 --GUARDADR EN UNA TABLA DE PRODUCTOS NUEVOS TODOS AQUELLOS PRODUCTOS QUE FUERON AGREGADOS 
 --RECIEMTEMENTE Y NO ESTAN EN ESTA TABLA DE APOYO
-SELECT *
-FROM producto;
 
-SELECT *
-FROM categoria;
+
+--CREAR LA TABLA PRODUCTS_NEW A PARTIR DE PRODUCTS,
+--MEDIANTE UNA CONSULTA
+SELECT 
+		TOP 0  -- PARA QUE NO SE LLEVE NINGUN REGISTRO
+	ProductID AS  [product_number],
+	ProductName AS [product_name],
+	UnitPrice AS Unit_price,
+	UnitsInStock AS [stock],
+	(UnitPrice * UnitsInStock) AS [total]
+INTO products_new --crea la tabla a partir de una consulta 
+FROM Products;
+
+ALTER TABLE products_new
+ADD CONSTRAINT pk_products_new
+PRIMARY KEY ([product_number]);
+
+SELECT 
+	p.ProductID, 
+	p.ProductName, 
+	p.UnitPrice, 
+	p.UnitsInStock,
+	(UnitPrice * UnitsInStock) AS [total], pw.*
+FROM Products AS P
+INNER JOIN products_new AS PW
+ON P.ProductID = PW.product_number;
+
+INSERT INTO products_new
+SELECT 
+	p.ProductName, 
+	p.UnitPrice, 
+	p.UnitsInStock,
+	(P.UnitPrice * P.UnitsInStock) AS [total]
+FROM Products AS P
+LEFT JOIN products_new AS PW
+ON P.ProductID = PW.product_number
+WHERE PW.product_number IS NULL;
+
+INSERT INTO products_new
+SELECT 
+	p.ProductName, 
+	p.UnitPrice, 
+	p.UnitsInStock,
+	(UnitPrice * UnitsInStock) AS [total]
+FROM Products AS P
+INNER JOIN products_new AS PW
+ON P.ProductID = PW.product_number
+WHERE PW.product_number IS NULL;
+
+
