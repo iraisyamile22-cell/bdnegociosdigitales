@@ -229,3 +229,4 @@ Comportamiento esperado: El código se detiene, no afecta la base de datos y lan
 EXEC usp_agregar_venta @Id_cliente = 'ALFKI', @Id_producto = 1, @cantidad_vendida = 10000;
 ```
 Comportamiento esperado: El código identifica que la cantidad supera las existencias, se detiene y notifica la falta de stock.
+

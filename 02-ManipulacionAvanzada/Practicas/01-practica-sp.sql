@@ -75,11 +75,17 @@ CREATE TABLE bdpractica.dbo.tblDetalleVenta
 GO
 
 CREATE OR ALTER PROC usp_agregar_venta
+    -- Parámetros que necesita el procedimiento para funcionar
     @Id_cliente  NCHAR(5),
     @Id_producto INT,
     @cantidad_vendida int 
 AS
 BEGIN
+    -- ==========================================
+    -- FASE 1: VALIDACIONES (Antes de hacer cambios)
+    -- ==========================================
+    
+    -- 1. Verificar si el cliente existe
     IF NOT EXISTS (
         SELECT 1 FROM bdpractica.dbo.CatCliente WHERE id_cliente = @Id_cliente
     )
@@ -88,7 +94,7 @@ BEGIN
         RETURN;
     END
 
-
+    -- 2. Verificar si el producto existe
     IF NOT EXISTS(
         SELECT 1 FROM bdpractica.dbo.CatProducto WHERE id_producto = @Id_producto 
     )
@@ -96,6 +102,8 @@ BEGIN
         PRINT 'Error: El producto no existe.';
         RETURN;
     END
+
+    -- 3. Verificar si la cantidad vendida es suficiente en la existencia
     DECLARE @existencia_actual INT;
     SELECT @existencia_actual = existencia FROM bdpractica.dbo.CatProducto  
     WHERE id_producto = @Id_producto;
@@ -106,31 +114,42 @@ BEGIN
             RETURN;
         END
     
+    -- ==========================================
+    -- FASE 2: LA TRANSACCIÓN (TRY / CATCH)
+    -- ==========================================
     BEGIN TRY
-    
+    -- Iniciamos la transacción (Si algo falla aquí adentro, nada se guarda)    
         BEGIN TRANSACTION;
 
+        -- A. Insertar en tblVENTA con la fecha actual (GETDATE)
         INSERT INTO bdpractica.dbo.tblVENTA
         (fecha, ID_cliente)
             VALUES (GETDATE(), @Id_cliente);
-
+            -- Obtener el ID de la venta que se acaba de crear (porque es Identity)
             DECLARE @Id_venta_nueva INT = SCOPE_IDENTITY();
+
+            -- B. Obtener el precio del producto desde CatProducto
             DECLARE @precio_producto MONEY
             SELECT @precio_producto = precio FROM bdpractica.dbo.CatProducto 
             WHERE id_producto = @Id_producto;
 
+            -- C. Insertar en tblDetalleVenta
             INSERT INTO bdpractica.dbo.tblDetalleVenta
             (ID_venta, ID_producto, precio_venta, cantidad_vendida)
             VALUES (@Id_venta_nueva, @Id_producto, @precio_producto,
             @cantidad_vendida);
 
+            -- D. Actualizar la existencia en CatProducto (restar lo vendido)
             UPDATE bdpractica.dbo.CatProducto 
             SET existencia = existencia - @cantidad_vendida
             WHERE  id_producto = @Id_producto;   
 
+            -- D. Actualizar la existencia en CatProducto (restar lo vendido)
             COMMIT TRANSACTION
                 PRINT 'Venta registrada exitosamente';
                 
+                -- Si ocurre cualquier error inesperado de SQL, entramos al CATCH
+        -- Deshacemos todo lo que se intentó guardar para no dejar datos a medias
                 END TRY
                 BEGIN CATCH
                     IF @@TRANCOUNT > 0
@@ -164,3 +183,6 @@ EXEC usp_agregar_venta
     @Id_cliente = 'ALFKI', 
     @Id_producto = 1, 
     @cantidad_vendida = 10000; -- Seguramente no tienes 10,000 en stock
+
+
+
